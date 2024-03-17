@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/https/1.0.0/https.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/fs/0.0.1/fs.min.js"
+    ></script>
+
+    <script type="text/javascript">
+      async function grapher(json) {
+        let num = 0;
+        const fileInput = document.getElementById("fileInput");
+        const fileName = fileInput.files[0].name;
+        const rock = fileName.split(".")[0];
+        const groupData = [];
+
+        const setData = json;
+
+        for (let i = 0; i < setData.length / 2; i++) {
+          const properData = [["Wavelength", "Intensity"]];
+
+          for (let j = 0; j < setData[i * 2].length; j++) {
+            properData[j + 1] = [setData[i * 2][j], setData[i * 2 + 1][j]];
+          }
+
+          groupData.push(properData);
+          google.charts.load("current", { packages: ["corechart"] });
+          google.charts.setOnLoadCallback(drawChart);
+        }
+
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable(groupData[num]);
+
+          var options = {
+            // title: rock + " Spectrum - Dataset " + num,
+            legend: { position: "none" },
+            width: 4000,
+            height: 1000,
+            isStacked: true,
+            vAxis: {
+              title: "Intensity (a.u.)",
+              viewWindowMode: "explicit",
+              viewWindow: {
+                // max: 0.04,
+                // min: 0.013,
+              },
+            },
+            hAxis: {
+              title: "Wavelength (nm)",
+              viewWindowMode: "explicit",
+              viewWindow: {
+                max: 380,
+                min: 750,
+              },
+            },
+          };
+          const div = document.createElement("div");
+          div.setAttribute("id", num);
+          document.body.appendChild(div);
+
+          var chart = new google.visualization.LineChart(
+            document.getElementById(num)
+          );
+
+          // Wait for the chart to finish drawing before calling the getImageURI() method.
+          google.visualization.events.addListener(chart, "ready", function () {
+            chart_div.innerHTML = '<img src="' + chart.getImageURI() + '">';
+            var downloadLink = document.createElement("a");
+            downloadLink.href = chart.getImageURI();
+            downloadLink.download = rock + ".png";
+            downloadLink.click();
+          });
+
+          chart.draw(data, options);
+          num++;
+        }
+      }
+
+    </script>
+    <script type="text/javascript">
+        async function fileHandler() {
+          const fileInput = document.getElementById("fileInput");
+          const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append("file", file);
+    
+          const response = await fetch("http://localhost:3000/api", {
+            method: "POST",
+            body: formData,
+          });
+    
+          const json = await response.json();
+
+          grapher(json)
+        }
+    
+    </script>
+  </head>
+    <div>
+      <div>
+        <div>Sample Data</div>
+        <input id="fileInput" type="file"></input>
+        <button onclick="fileHandler()">Generate</button>
+      </div>
+      <div id="chart_div"></div>
+    </div>
+</html>
