@@ -106,7 +106,7 @@ app.post("/api", upload.single("file"), (req, res) => {
       });
     }
 
-    const properSets = [];
+    let properSets = [];
     for (let i = 0; i < numOfSets * 2; i++) {
       properSets.push([]);
     }
@@ -122,6 +122,27 @@ app.post("/api", upload.single("file"), (req, res) => {
       for (let j = 0; j < properSets[i].length; j++) {
         properSets[i][j] = Number(properSets[i][j]);
       }
+    }
+
+    for (let i = 1; i < properSets.length; i += 2) {
+      console.log(properSets[i]);
+      const mean =
+        properSets[i].reduce((sum, value) => sum + value, 0) /
+        properSets[i].length;
+      console.log(`Mean of properSets[${i}]: ${mean}`);
+
+      properSets[i] = properSets[i].map((value) => value / mean);
+
+      // Apply rolling window to the values
+      const windowSize = 5; // Change this value to adjust the window size
+      const rolledValues = [];
+      for (let j = 0; j < properSets[i].length - windowSize + 1; j++) {
+        const window = properSets[i].slice(j, j + windowSize);
+        const windowSum = window.reduce((sum, value) => sum + value, 0);
+        const windowMean = windowSum / windowSize;
+        rolledValues.push(windowMean);
+      }
+      properSets[i] = rolledValues;
     }
 
     res.send(properSets);

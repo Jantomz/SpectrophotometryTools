@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/https/1.0.0/https.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/fs/0.0.1/fs.min.js"
+    ></script>
+
+    <script type="text/javascript">
+      async function grapher(json, calibrationJson) {
+        let num = 0;
+        const sampleFileInput = document.getElementById("sampleDataInput");
+        const fileName = sampleFileInput.files[0].name;
+        const rock = fileName.split(".")[0];
+        const groupData = [];
+
+        const setData = json;
+        const setCalibrationData = calibrationJson
+
+        // Too much currently, too much data
+
+        let numOfWhitePapers = document.getElementById("numOfWhitePapers").value || 1;
+
+        console.log(calibrationJson.length / 2)
+
+        if (numOfWhitePapers > calibrationJson.length / 2){
+          numOfWhitePapers = 1;
+          alert("Too many white papers, must be less than or equal to " + calibrationJson.length / 2)
+        }
+        
+        for (let h = 0; h < numOfWhitePapers; h++) {
+          const calibrationData = setCalibrationData[h*2 + 1];
+        
+          for (let i = 0; i < setData.length / 2; i++) {
+            const properData = [["Wavelength", "Intensity"]];
+
+            for (let j = 0; j < setData[i * 2].length; j++) {
+              properData[j + 1] = [setData[i * 2][j], setData[i * 2 + 1][j]];
+              properData[j + 1][1] = properData[j + 1][1] / calibrationData[j];
+              
+            }
+            console.log(properData)
+            groupData.push(properData);
+            google.charts.load("current", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(drawChart);
+          }
+      }
+
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable(groupData[num]);
+
+          var options = {
+            // title: rock + " Spectrum - Dataset " + num,
+            legend: { position: "none" },
+            width: 4000,
+            height: 1000,
+            isStacked: true,
+            vAxis: { 
+              title: "Intensity (a.u.)",
+              viewWindowMode: "explicit",
+              viewWindow: {
+                max: 1.15,
+                min: 0.4,
+              },
+            },
+            hAxis: {
+              title: "Wavelength (nm)",
+              viewWindowMode: "explicit",
+              viewWindow: {
+                max: 380,
+                min: 950,
+              },
+            },
+          };
+          const div = document.createElement("div");
+          div.setAttribute("id", num);
+          document.body.appendChild(div);
+
+          var chart = new google.visualization.LineChart(
+            document.getElementById(num)
+          );
+
+          // Wait for the chart to finish drawing before calling the getImageURI() method.
+          google.visualization.events.addListener(chart, "ready", function () {
+            chart_div.innerHTML = '<img src="' + chart.getImageURI() + '">';
+            var downloadLink = document.createElement("a");
+            downloadLink.href = chart.getImageURI();
+            downloadLink.download = rock + "_d" + num + ".png";
+            downloadLink.click();
+          });
+
+          chart.draw(data, options);
+          num++;
+        }
+      }
+
+    </script>
+    <script type="text/javascript">
+        async function sampleDataHandler() {
+          const sampleFileInput = document.getElementById("sampleDataInput");
+          const file = sampleFileInput.files[0];
+          const formData = new FormData();
+          formData.append("file", file);
+    
+          const response = await fetch("http://localhost:3000/api", {
+            method: "POST",
+            body: formData,
+          });
+    
+          const json = await response.json();
+
+          const calibrationDataJson = await calibrationDataHandler();
+
+          grapher(json, calibrationDataJson)
+        }
+
+        async function calibrationDataHandler() {
+          const calibrationFileInput = document.getElementById("calibrationDataInput");
+          const file = calibrationFileInput.files[0];
+          const formData = new FormData();
+          formData.append("file", file);
+    
+          const response = await fetch("http://localhost:3000/api", {
+            method: "POST",
+            body: formData,
+          });
+    
+          const json = await response.json();
+
+          return json;
+
+        }
+    
+    </script>
+  </head>
+    <div>
+      <input id="numOfWhitePapers" value="1" type="number" min="1" placeholder="Number of Calibrations"></input>
+      <div style="padding: 3em;">
+        <div>Sample Data</div>
+        <input id="sampleDataInput" type="file"></input>
+        <button onclick="sampleDataHandler()">Generate</button>
+      </div>
+      <div style="padding: 3em;">
+        <div>Calibration Data</div>
+        <input id="calibrationDataInput" type="file"></input>
+      </div>
+      <div id="chart_div"></div>
+    </div>
+</html>
