@@ -6,7 +6,7 @@ This repository contains various tools in different formats for visualizing, man
 
 - [Introduction](#introduction)
 - [Data Point Naming Scheme](#data-point-naming-scheme)
-- [Mineral Indexes](#mineral-indexes)
+- [Mineral Indices](#mineral-indices)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
@@ -19,10 +19,12 @@ This repository is created for the Ottawa Regional Science Fair and aims to prov
 The data point naming scheme used in this repository follows the format: `rock_[magnification]_[version]_[sample-num]`. This naming convention helps to organize and identify different data points based on their magnification, version, and sample number.
 
 magnification: a multiplier value to increase variation in data
+
 version: a version of the dataset that is randomly varied
+
 sample-num: the index of the data within the dataset
 
-## Mineral Indexes
+## Mineral Indices
 
 The minerals are each given an index as their classification, this is based off alphabetical order:
 
@@ -81,7 +83,7 @@ Then just run all blocks of code in order and you can create a tensorflow model 
 
 ## HTML Graphers
 
-Open the Server file in your terminal and type `npm start` to open the server on your local machine.
+Open the "Server" file in your terminal and type `npm start` to open the server on your local machine.
 
 Then, open the HTML file that you would like to use and simply input your csv file to create and download the respective graphs!
 
