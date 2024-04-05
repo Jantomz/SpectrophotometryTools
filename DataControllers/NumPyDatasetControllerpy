@@ -5,7 +5,7 @@ import pandas as pd
 class datasets():
     """
     A class for managing datasets.
-
+s
     Attributes:
         data (numpy.ndarray): The dataset.
         target (numpy.ndarray): The target values.
