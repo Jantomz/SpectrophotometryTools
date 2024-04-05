@@ -27,19 +27,63 @@ sample-num: the index of the data within the dataset
 The minerals are each given an index as their classification, this is based off alphabetical order:
 
 0 - Biotite
+
 1 - Calcite
+
 2 - Fluorite
+
 3 - Galena
+
 4 - Hematite
+
 5 - Quartz
 
-## Usage
+## Tools
 
 To use the tools in this repository, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Navigate to the specific tool you want to use.
-3. Follow the instructions provided in the tool's documentation to install any dependencies and run the tool.
+3. Follow the specific instructions of each tool:
+
+- [Model Tester](#model-tester)
+  - Tool to test tensorflow keras spectrophotometry machine learning models with mineral spectral signatures
+- [Tensorflow Model Creator](#tensorflow-model-creator)
+  - Tool to create tensorflow keras spectrophotometry machine learning models with mineral spectral signatures
+- [HTML Graphers](#html-graphers)
+  - Tool to visualize mass spectral signature data from csv files to compare different minerals
+
+## Model Tester
+
+To test a specific model, open up the jupyter notebook in your local environment and select the proper model to be loaded by replacing `your_keras_model` with the file path to your model.
+
+```
+model = load_model("your_keras_model")
+```
+
+Then replace `your_data` with the file path to the file containing your data in csv format.
+
+```
+dataObj = manipulator("your_data")
+```
+
+Then just run all blocks of code in order and you can test the accuracy of your model!
+
+## Tensorflow Model Creator
+
+To create a tensorflow model just follow the lines of code in the tool, replacing `your_data` with the file path to the file containing your data in csv format.
+
+```
+dataObj = manipulator("your_data")
+```
+
+Then just run all blocks of code in order and you can create a tensorflow model to identify and classify mineral spectral signatures!
+
+## HTML Graphers
+
+Open the Server file in your terminal and type `npm start` to open the server on your local machine.
+
+Then, open the HTML file that you would like to use and simply input your csv file to create and download the respective graphs!
 
 ## Contributing
 
