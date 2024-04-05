@@ -1,21 +1,8 @@
 <html>
   <head>
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/https/1.0.0/https.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/fs/0.0.1/fs.min.js"
-    ></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/https/1.0.0/https.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fs/0.0.1/fs.min.js"></script>
 
     <script type="text/javascript">
       async function grapher(json) {
@@ -25,10 +12,9 @@
         const rock = fileName.split(".")[0];
         const groupData = [];
 
-
         const setData = json;
 
-        console.log(setData)
+        console.log(setData);
 
         for (let i = 0; i < setData.length / 2; i++) {
           const properData = [["Wavelength", "Intensity"]];
@@ -72,9 +58,7 @@
           div.setAttribute("id", num);
           document.body.appendChild(div);
 
-          var chart = new google.visualization.LineChart(
-            document.getElementById(num)
-          );
+          var chart = new google.visualization.LineChart(document.getElementById(num));
 
           // Wait for the chart to finish drawing before calling the getImageURI() method.
           google.visualization.events.addListener(chart, "ready", function () {
@@ -90,26 +74,24 @@
         }
       }
 
-    </script>
-    <script type="text/javascript">
-        async function fileHandler() {
-          const fileInput = document.getElementById("fileInput");
-          const file = fileInput.files[0];
-          const formData = new FormData();
-          formData.append("file", file);
-    
-          const response = await fetch("http://localhost:3000/api", {
-            method: "POST",
-            body: formData,
-          });
-    
-          const json = await response.json();
+      async function fileHandler() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
 
-          grapher(json)
-        }
-    
+        const response = await fetch("http://localhost:3000/api", {
+          method: "POST",
+          body: formData,
+        });
+
+        const json = await response.json();
+
+        grapher(json);
+      }
     </script>
   </head>
+  <body>
     <div>
       <div>
         <div>Sample Data</div>
@@ -118,4 +100,5 @@
       </div>
       <div id="chart_div"></div>
     </div>
+  </body>
 </html>
